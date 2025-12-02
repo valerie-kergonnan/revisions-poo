@@ -261,4 +261,54 @@ class Product
             return [];
         }
     }
+
+    /**
+     * Insère le produit courant dans la base de données
+     * @return Product|false L'instance avec l'ID généré si succès, false sinon
+     */
+    public function create(): Product|false
+    {
+        try {
+            // Configuration de la connexion à la base de données
+            $host = 'localhost';
+            $dbname = 'draft-shop';
+            $username = 'root';
+            $password = '';
+
+            $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // Requête d'insertion
+            $sql = "INSERT INTO product (name, photos, price, description, quantity, category_id, createdAt, updatedAt) 
+                    VALUES (:name, :photos, :price, :description, :quantity, :category_id, :createdAt, :updatedAt)";
+
+            $stmt = $pdo->prepare($sql);
+
+            // Conversion des photos en JSON
+            $photosJson = json_encode($this->photos);
+
+            // Exécution de la requête avec les propriétés de l'instance courante
+            $result = $stmt->execute([
+                'name' => $this->name,
+                'photos' => $photosJson,
+                'price' => $this->price,
+                'description' => $this->description,
+                'quantity' => $this->quantity,
+                'category_id' => $this->category_id,
+                'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
+                'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s')
+            ]);
+
+            if ($result) {
+                // Récupération de l'ID généré et mise à jour de l'instance
+                $this->id = (int)$pdo->lastInsertId();
+                return $this;
+            }
+
+            return false;
+        } catch (PDOException $e) {
+            // En cas d'erreur, retourner false
+            return false;
+        }
+    }
 }
