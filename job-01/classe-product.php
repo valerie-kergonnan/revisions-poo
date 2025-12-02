@@ -124,7 +124,7 @@ class Product
         $this->category_id = $category_id;
     }
 
-    
+
     public function getCategory(): ?Category
     {
         if ($this->category_id === null) {
@@ -212,6 +212,53 @@ class Product
         } catch (PDOException $e) {
             // En cas d'erreur, retourner false
             return false;
+        }
+    }
+
+    /**
+     * Récupère tous les produits de la base de données
+     * @return Product[] Tableau d'instances Product
+     */
+    public function findAll(): array
+    {
+        try {
+            // Configuration de la connexion à la base de données
+            $host = 'localhost';
+            $dbname = 'draft-shop';
+            $username = 'root';
+            $password = '';
+
+            $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // Requête pour récupérer tous les produits
+            $sql = "SELECT * FROM product";
+            $stmt = $pdo->query($sql);
+
+            $productsData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $products = [];
+
+            // Création et hydratation d'une instance Product pour chaque ligne
+            foreach ($productsData as $productData) {
+                $product = new Product();
+                $product->setId((int)$productData['id']);
+                $product->setName($productData['name']);
+                $product->setPhotos(json_decode($productData['photos'], true));
+                $product->setPrice((int)$productData['price']);
+                $product->setDescription($productData['description']);
+                $product->setQuantity((int)$productData['quantity']);
+                $product->setCategoryId((int)$productData['category_id']);
+                $product->setCreatedAt(new DateTime($productData['createdAt']));
+                $product->setUpdatedAt(new DateTime($productData['updatedAt']));
+
+                $products[] = $product;
+            }
+
+            return $products;
+        } catch (PDOException $e) {
+            // En cas d'erreur, retourner un tableau vide
+            return [];
         }
     }
 }
