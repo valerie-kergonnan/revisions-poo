@@ -311,4 +311,67 @@ class Product
             return false;
         }
     }
+
+    /**
+     * Met à jour le produit courant dans la base de données
+     * @return Product|false L'instance mise à jour si succès, false sinon
+     */
+    public function update(): Product|false
+    {
+        // Vérifier que l'ID existe
+        if ($this->id === null) {
+            return false;
+        }
+
+        try {
+            // Configuration de la connexion à la base de données
+            $host = 'localhost';
+            $dbname = 'draft-shop';
+            $username = 'root';
+            $password = '';
+
+            $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // Mise à jour de la date de modification
+            $this->updatedAt = new DateTime();
+
+            // Requête de mise à jour
+            $sql = "UPDATE product 
+                    SET name = :name, 
+                        photos = :photos, 
+                        price = :price, 
+                        description = :description, 
+                        quantity = :quantity, 
+                        category_id = :category_id, 
+                        updatedAt = :updatedAt 
+                    WHERE id = :id";
+
+            $stmt = $pdo->prepare($sql);
+
+            // Conversion des photos en JSON
+            $photosJson = json_encode($this->photos);
+
+            // Exécution de la requête avec les propriétés de l'instance courante
+            $result = $stmt->execute([
+                'id' => $this->id,
+                'name' => $this->name,
+                'photos' => $photosJson,
+                'price' => $this->price,
+                'description' => $this->description,
+                'quantity' => $this->quantity,
+                'category_id' => $this->category_id,
+                'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s')
+            ]);
+
+            if ($result) {
+                return $this;
+            }
+
+            return false;
+        } catch (PDOException $e) {
+            // En cas d'erreur, retourner false
+            return false;
+        }
+    }
 }
