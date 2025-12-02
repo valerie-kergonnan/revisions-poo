@@ -124,10 +124,7 @@ class Product
         $this->category_id = $category_id;
     }
 
-    /**
-     * Récupère la catégorie associée au produit depuis la base de données
-     * @return Category|null L'instance de la catégorie ou null si non trouvée
-     */
+    
     public function getCategory(): ?Category
     {
         if ($this->category_id === null) {
@@ -169,6 +166,52 @@ class Product
         } catch (PDOException $e) {
             // En cas d'erreur, retourner null
             return null;
+        }
+    }
+
+    /**
+     * Recherche un produit par son ID et hydrate l'instance courante avec ses données
+     * @param int $id L'ID du produit à rechercher
+     * @return Product|false L'instance courante hydratée si trouvée, false sinon
+     */
+    public function findOneById(int $id): Product|false
+    {
+        try {
+            // Configuration de la connexion à la base de données
+            $host = 'localhost';
+            $dbname = 'draft-shop';
+            $username = 'root';
+            $password = '';
+
+            $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // Requête pour récupérer le produit
+            $sql = "SELECT * FROM product WHERE id = :id";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute(['id' => $id]);
+
+            $productData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($productData) {
+                // Hydratation de l'instance courante avec les données
+                $this->setId((int)$productData['id']);
+                $this->setName($productData['name']);
+                $this->setPhotos(json_decode($productData['photos'], true));
+                $this->setPrice((int)$productData['price']);
+                $this->setDescription($productData['description']);
+                $this->setQuantity((int)$productData['quantity']);
+                $this->setCategoryId((int)$productData['category_id']);
+                $this->setCreatedAt(new DateTime($productData['createdAt']));
+                $this->setUpdatedAt(new DateTime($productData['updatedAt']));
+
+                return $this;
+            }
+
+            return false;
+        } catch (PDOException $e) {
+            // En cas d'erreur, retourner false
+            return false;
         }
     }
 }
