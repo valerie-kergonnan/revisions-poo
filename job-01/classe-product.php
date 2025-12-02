@@ -123,4 +123,52 @@ class Product
     {
         $this->category_id = $category_id;
     }
+
+    /**
+     * Récupère la catégorie associée au produit depuis la base de données
+     * @return Category|null L'instance de la catégorie ou null si non trouvée
+     */
+    public function getCategory(): ?Category
+    {
+        if ($this->category_id === null) {
+            return null;
+        }
+
+        try {
+            // Configuration de la connexion à la base de données
+            $host = 'localhost';
+            $dbname = 'draft-shop';
+            $username = 'root';
+            $password = '';
+
+            $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // Requête pour récupérer la catégorie
+            $sql = "SELECT * FROM category WHERE id = :id";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute(['id' => $this->category_id]);
+
+            $categoryData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($categoryData) {
+                // Création et hydratation de l'instance Category
+                require_once __DIR__ . '/../job-02/classe-catagory.php';
+
+                $category = new Category();
+                $category->setId((int)$categoryData['id']);
+                $category->setName($categoryData['name']);
+                $category->setDescription($categoryData['description']);
+                $category->setCreatedAt(new DateTime($categoryData['createdAt']));
+                $category->setUpdatedAt(new DateTime($categoryData['updatedAt']));
+
+                return $category;
+            }
+
+            return null;
+        } catch (PDOException $e) {
+            // En cas d'erreur, retourner null
+            return null;
+        }
+    }
 }

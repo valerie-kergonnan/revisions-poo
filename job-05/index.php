@@ -1,6 +1,7 @@
 <?php
 
 require_once '../job-01/classe-product.php';
+require_once '../job-02/classe-catagory.php';
 
 // Configuration de la connexion à la base de données
 $host = 'localhost';
@@ -60,26 +61,30 @@ try {
 
         echo "✓ Instance créée et hydratée avec succès!\n\n";
 
-        // Récupération de la catégorie associée au produit
-        echo "=== Récupération de la catégorie associée ===\n";
+        // Récupération de la catégorie associée au produit via getCategory()
+        echo str_repeat("=", 60) . "\n";
+        echo "=== Job 05 : Récupération de la catégorie associée ===\n";
+        echo str_repeat("=", 60) . "\n\n";
+
         $category = $product->getCategory();
 
         if ($category) {
-            echo "Catégorie récupérée:\n";
+            echo "✓ Catégorie récupérée avec succès via getCategory()!\n\n";
+            echo "Informations de la catégorie :\n";
             echo "  ID: " . $category->getId() . "\n";
             echo "  Nom: " . $category->getName() . "\n";
             echo "  Description: " . $category->getDescription() . "\n";
             echo "  Créée le: " . $category->getCreatedAt()->format('d/m/Y H:i:s') . "\n";
             echo "  Mise à jour le: " . $category->getUpdatedAt()->format('d/m/Y H:i:s') . "\n\n";
-            echo "✓ Catégorie récupérée avec succès!\n";
+
+            echo "🎉 Le produit '" . $product->getName() . "' appartient à la catégorie '" . $category->getName() . "'\n";
         } else {
-            echo "⚠ Impossible de récupérer la catégorie\n";
+            echo "⚠ Impossible de récupérer la catégorie associée\n";
         }
     } else {
         echo "⚠ Aucun produit trouvé avec l'ID 7\n";
         echo "Vérifiez que la base de données contient bien des produits.\n";
     }
-    
 } catch (PDOException $e) {
     echo "✗ Erreur de connexion ou de requête: " . $e->getMessage() . "\n";
     exit(1);
