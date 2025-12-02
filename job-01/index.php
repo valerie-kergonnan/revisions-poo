@@ -9,7 +9,8 @@ $product = new Product(
     ['photo1.jpg', 'photo2.jpg', 'photo3.jpg'],
     89999,
     'Un excellent ordinateur portable pour le travail et les loisirs',
-    10
+    10,
+    1 // category_id
 );
 
 // Test des getters
