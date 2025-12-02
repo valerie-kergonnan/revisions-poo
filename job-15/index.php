@@ -77,13 +77,13 @@ if ($electronic !== false) {
     $stockInitial = $electronic->getQuantity();
     echo "Produit: " . $electronic->getName() . PHP_EOL;
     echo "Stock initial: " . $stockInitial . PHP_EOL;
-    
+
     // Utilisation des méthodes de l'interface
     $electronic->addStocks(15)
-               ->removeStocks(5);
-    
+        ->removeStocks(5);
+
     echo "Après ajout de 15 et retrait de 5: " . $electronic->getQuantity() . PHP_EOL;
-    
+
     if ($electronic->update()) {
         echo "✓ Stock mis à jour en base de données!" . PHP_EOL;
     }
