@@ -2,16 +2,16 @@
 
 class Category
 {
-    private int $id;
-    private string $name;
-    private string $description;
+    private ?int $id = null;
+    private ?string $name = null;
+    private ?string $description = null;
     private DateTime $createdAt;
     private DateTime $updatedAt;
 
     public function __construct(
-        int $id,
-        string $name,
-        string $description,
+        ?int $id = null,
+        ?string $name = null,
+        ?string $description = null,
         ?DateTime $createdAt = null,
         ?DateTime $updatedAt = null
     ) {
@@ -23,17 +23,17 @@ class Category
     }
 
     // Getters
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }

@@ -2,24 +2,24 @@
 
 class Product
 {
-    private int $id;
-    private string $name;
-    private array $photos;
-    private int $price;
-    private string $description;
-    private int $quantity;
-    private int $category_id;
+    private ?int $id = null;
+    private ?string $name = null;
+    private ?array $photos = null;
+    private ?int $price = null;
+    private ?string $description = null;
+    private ?int $quantity = null;
+    private ?int $category_id = null;
     private DateTime $createdAt;
     private DateTime $updatedAt;
 
     public function __construct(
-        int $id,
-        string $name,
-        array $photos,
-        int $price,
-        string $description,
-        int $quantity,
-        int $category_id
+        ?int $id = null,
+        ?string $name = null,
+        ?array $photos = null,
+        ?int $price = null,
+        ?string $description = null,
+        ?int $quantity = null,
+        ?int $category_id = null
     ) {
         $this->id = $id;
         $this->name = $name;
@@ -33,32 +33,32 @@ class Product
     }
 
     // Getters
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function getPhotos(): array
+    public function getPhotos(): ?array
     {
         return $this->photos;
     }
 
-    public function getPrice(): int
+    public function getPrice(): ?int
     {
         return $this->price;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function getQuantity(): int
+    public function getQuantity(): ?int
     {
         return $this->quantity;
     }
@@ -73,7 +73,7 @@ class Product
         return $this->updatedAt;
     }
 
-    public function getCategoryId(): int
+    public function getCategoryId(): ?int
     {
         return $this->category_id;
     }
