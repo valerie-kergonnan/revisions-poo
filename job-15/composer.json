@@ -1,0 +1,16 @@
+{
+    "name": "app/revisions-poo",
+    "description": "Job 15 - Autoloading avec Composer",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Student"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}
